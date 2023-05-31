@@ -1,2 +1,5 @@
 # ignore python cache files
 global-exclude *.pyc
+
+# ignore __pycache__ directories
+global-exclude __pycache__
