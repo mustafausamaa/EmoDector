@@ -7,7 +7,6 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import tensorflow as tf
 import pickle
-from sklearn.preprocessing import LabelEncoder
 import logging
 logging.getLogger('tensorflow').disabled = True
 
