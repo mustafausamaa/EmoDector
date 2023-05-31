@@ -13,3 +13,4 @@ opencv-python
 tensorflow
 nltk
 scikit-learn
+deepface
