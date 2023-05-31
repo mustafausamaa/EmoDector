@@ -5,13 +5,9 @@ import Text.nlp_emotion as nlp
 import time
 import threading
 import json
-import math
 # Audio libraries
 # Import necessary libraries
-import os
 import pickle
-from cmath import sqrt
-from math import ceil
 
 # import skimage as sk
 import cv2 as cv
@@ -28,24 +24,13 @@ import skimage.io as io
 import xmltodict
 from cv2 import (VideoCapture, destroyWindow, groupRectangles, imshow, imwrite,
                  namedWindow, rectangle, resize, waitKey)
-from numba import jit, njit
-# from commonfunctions import *
-from PIL import Image as im
-from python_speech_features import mfcc
 from scipy import ndimage
-from scipy import signal as sig
 from scipy.fftpack import dct
 from scipy.io import wavfile
 from scipy.signal import wiener
 from scipy.stats import kurtosis, skew
 from skimage.measure import shannon_entropy
 from skimage.morphology import dilation
-from sklearn.decomposition import PCA
-from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import KFold, train_test_split
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.svm import SVC
 from deepface import DeepFace
 # from Rect import *
 # %matplotlib inline
