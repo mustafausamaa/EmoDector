@@ -1,26 +1,9 @@
 # Import necessary libraries
-import os
 import librosa
 import librosa.core
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.svm import SVC
-
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
-
-from sklearn.decomposition import PCA
-
-from sklearn.model_selection import KFold
 
 import pickle
-from sklearn.preprocessing import MinMaxScaler
-
-from python_speech_features import mfcc
-from scipy.io import wavfile
-
 
 
 # Function to extract feature extraction from the audio sample
@@ -130,7 +113,7 @@ def ex_features(X, sample_rate: float) -> np.ndarray:
     return ext_features
 
 
-#Function to normalizate the audio samples
+# Function to normalizate the audio samples
 def normalize_sample(sample, min_list, max_list):
 
     for i in range(len(sample)):
@@ -139,12 +122,10 @@ def normalize_sample(sample, min_list, max_list):
     return sample
 
 
-
-#Function to read the normalization info of the used dataset
+# Function to read the normalization info of the used dataset
 def read_normalization_file():
     with open("Audio/normalization.txt", "r") as file:
         lines = file.readlines()
-
 
         min_list = []
         max_list = []
@@ -158,51 +139,46 @@ def read_normalization_file():
         # print(values[0],values[1])
             min_list.append(float(values[0]))
             max_list.append(float(values[1]))
-        
-        return min_list,max_list
+
+        return min_list, max_list
 
 
-#Function to load the pickled machine learning model
+# Function to load the pickled machine learning model
 def load_model(path):
     with open(path, 'rb') as f:
-        model= pickle.load(f)
+        model = pickle.load(f)
     return model
 
 
-
-#Main function
+# Main function
 def main():
-    
-   #Audio file path
-   audio_sample_path = "Audio/audio_files/Recording(2).wav"
-   
-   #Load the audio file
-   audio, sr = librosa.load(audio_sample_path, sr=22050)
-   
-   #Read normalization file
-   min_list,max_list=read_normalization_file()
-   
-   #Feature extraction
-   features=ex_features(audio,sr)
-    
-   #Feature normalization
-   features_norm = normalize_sample(features, min_list, max_list)
-   features_norm = features_norm.reshape(1, -1)
 
+    # Audio file path
+    audio_sample_path = "Audio/audio_files/Recording(2).wav"
 
-   #Model path
-   model_path='Audio/sound_models/svm_model81.6_s+n+c.pkl'
-    
-   #Load the machine learning mode
-   model=load_model(model_path)
+    # Load the audio file
+    audio, sr = librosa.load(audio_sample_path, sr=22050)
 
-   #Predict
-   prediction = model.predict(features_norm)
-   
-   
-   print(prediction)
+    # Read normalization file
+    min_list, max_list = read_normalization_file()
 
+    # Feature extraction
+    features = ex_features(audio, sr)
 
+    # Feature normalization
+    features_norm = normalize_sample(features, min_list, max_list)
+    features_norm = features_norm.reshape(1, -1)
+
+    # Model path
+    model_path = 'Audio/sound_models/svm_model81.6_s+n+c.pkl'
+
+    # Load the machine learning mode
+    model = load_model(model_path)
+
+    # Predict
+    prediction = model.predict(features_norm)
+
+    print(prediction)
 
 
 if __name__ == "__main__":
