@@ -500,7 +500,7 @@ def detect_face(img_path, frame_index):
         window_x2 = window_x + windowWidth
         window_y2 = window_y + windowHeight
 
-        path = 'captured_frame'+str(frame_index)+'.jpg'
+        path = 'images/captured_frame'+str(frame_index)+'.jpg'
         cv.imwrite(path,
                    finalImage[int(window_y):int(window_y2), int(window_x):int(window_x2)])
         return finalImage[int(window_y):int(window_y2), int(window_x):int(window_x2)], path, finalImage
@@ -515,7 +515,7 @@ def detect_face(img_path, frame_index):
         #
         # print('detected!')
 
-        path = 'captured_frame'+str(frame_index)+'.jpg'
+        path = 'images/captured_frame'+str(frame_index)+'.jpg'
         cv.imwrite(path,
                    facesList[thresh_list.index(max(thresh_list))])
         return facesList[thresh_list.index(max(thresh_list))], path, finalImage
@@ -552,7 +552,7 @@ def video_to_frame(path):
         # If successful, save the frame as an image
         if success:
             flipped_image = cv.flip(image, 0)
-            frame_path = 'frame'+str(index)+'.jpg'
+            frame_path = 'images/frame'+str(index)+'.jpg'
             # print(frame_path)
             cv.imwrite(frame_path, flipped_image)
             index += 1
@@ -1015,7 +1015,7 @@ def facial_emotion_thread():
 
 def audio_emotion_thread():
     # Audio file path
-    audio_sample_path = "Audio/audio_files/Recording(2).wav"
+    audio_sample_path = "Audio/audio_files/Recording(6).wav"
 
     # Load the audio file
     audio, sr = librosa.load(audio_sample_path, sr=22050)
