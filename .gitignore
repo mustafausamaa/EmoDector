@@ -1,5 +1,2 @@
 # ignore python cache files
-global-exclude *.pyc
-
-Text\__pycache__
-Questions\__pycache__
+*.pyc
