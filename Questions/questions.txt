@@ -1,0 +1,43 @@
+happy: What events or experiences have recently brought you happiness?
+happy: What are you looking forward to in the near future that brings you joy?
+happy: How would you describe your overall mood lately?
+happy: What makes you smile or laugh the most?
+happy: What's the best thing that's happened to you today?
+happy: What are you most excited about right now?
+happy: What makes you smile?
+happy: What makes you laugh?
+
+sad: Have you experienced any recent losses or setbacks that have made you feel sad?
+sad: What is causing you the most distress or sadness right now?
+sad: How has your energy level been affected by your current emotions?
+sad: What activities or hobbies have lost their appeal to you lately?
+sad: What's been weighing on your mind lately?
+sad: What's something that's made you sad recently?
+sad: What's something that you miss?
+sad: What makes you cry?
+
+angry: Are you feeling any physical sensations such as tension or heat when you're angry?
+angry: What actions or behaviors of others frustrate or irritate you the most?
+angry: What's something that really gets under your skin?
+angry: What's something that makes you want to scream?
+angry: What's something that you're really passionate about?
+angry: What's something that you're really annoyed by?
+
+fear: What specific situations or objects make you feel afraid?
+fear: Have you noticed any changes in your behavior or habits due to fear?
+fear: Do you experience any physical symptoms when you're afraid, such as a racing heart or sweating?
+fear: Are there any recurring nightmares or anxious thoughts that contribute to your fear?
+fear: What's the scariest thing you've ever experienced?
+fear: What's something that you're afraid of?
+fear: What's something that makes you feel uneasy?
+fear: What's something that you're worried about?
+
+surprise: What unexpected events or news have recently surprised you?
+surprise: How do you typically react when something takes you by surprise?
+surprise: What emotions do you experience alongside surprise? (e.g., excitement, fear)
+surprise: Have there been any recent instances where you felt a sudden shift in your emotions?
+surprise: What's the last thing that really surprised you?
+surprise: What's something that you've always wanted to experience?
+surprise: What's something that you're looking forward to?
+surprise: What's something that you've always wanted to do?
+
