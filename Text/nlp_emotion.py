@@ -1,4 +1,3 @@
-import emoji
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import Tokenizer
 import numpy as np
@@ -24,9 +23,6 @@ with open('text/tokenizer.pickle', 'rb') as handle:
 
 with open('text/label_encoder.sav', 'rb') as handle:
     le = pickle.load(handle)
-
-
-emoji.UNICODE_EMOJI = emoji.EMOJI_DATA
 
 
 def lemmatization(text):
