@@ -3,6 +3,8 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import Tokenizer
 import numpy as np
 import re
+import nltk
+nltk.download('wordnet')
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import tensorflow as tf

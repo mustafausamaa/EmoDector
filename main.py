@@ -8,7 +8,7 @@ import json
 # Audio libraries
 # Import necessary libraries
 import pickle
-
+import sys
 # import skimage as sk
 import cv2 as cv
 
@@ -22,6 +22,7 @@ import numpy as np
 import pywt
 import skimage.io as io
 import xmltodict
+from flask import Flask, jsonify, request
 from cv2 import (VideoCapture, destroyWindow, groupRectangles, imshow, imwrite,
                  namedWindow, rectangle, resize, waitKey)
 from scipy import ndimage
@@ -32,6 +33,9 @@ from scipy.stats import kurtosis, skew
 from skimage.measure import shannon_entropy
 from skimage.morphology import dilation
 from deepface import DeepFace
+import io as input
+import librosa
+import urllib.request
 # from Rect import *
 # %matplotlib inline
 # %load_ext autoreload
@@ -309,7 +313,7 @@ def show_images(images, titles=None):
 
 
 def detect_face(img_path, frame_index):
-
+    print("imag_path:",img_path)
     # Define the edge detection filter
     sobel_x = np.array([[1, 0, -1], [2, 0, -2], [1, 0, -1]])
     sobel_y = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]])
@@ -330,7 +334,7 @@ def detect_face(img_path, frame_index):
     # img = img.crop(box)
     facesList = []
 
-    # show_images([img])
+    # show_images([img,finalImage])
 
     # Convert the window to grayscale
     gray = img
@@ -964,15 +968,20 @@ def read_normalization_file():
 ###############################################################################################################################
 
 
-def facial_emotion_thread():
+def facial_emotion_thread(image_name1,image_name2,image_name3):
     # File path
-    path = 'Facial/WhatsApp Video 2023-05-22 at 10.40.19 PM.mp4'
+    path = 'Facial/WhatsAppVideo2023-05-22at10.40.19PM.mp4'
+    frame_paths=[]
+    frame_paths.append("https://firebasestorage.googleapis.com/v0/b/emodetector-fad51.appspot.com/o/test"+"%2F"+str(image_name1)+"?alt=media")
+    frame_paths.append("https://firebasestorage.googleapis.com/v0/b/emodetector-fad51.appspot.com/o/test"+"%2F"+str(image_name2)+"?alt=media")
+    frame_paths.append("https://firebasestorage.googleapis.com/v0/b/emodetector-fad51.appspot.com/o/test"+"%2F"+str(image_name3)+"?alt=media")
+    detected_faces, detected_faces_paths = detect_faces(frame_paths)
 
     # # Extract frames from the video
-    frame_paths = video_to_frame(path)
-    # print(frame_paths)
+    # frame_paths = video_to_frame(path)
+    # # print(frame_paths)
 
-    detected_faces, detected_faces_paths = detect_faces(frame_paths)
+    # detected_faces, detected_faces_paths = detect_faces(frame_paths)
 
     # Emotion detection
     predictions = []
@@ -998,12 +1007,15 @@ def facial_emotion_thread():
 
 # import nlp_emotion script
 
-def audio_emotion_thread():
+def audio_emotion_thread(audio_name):
     # Audio file path
-    audio_sample_path = "Audio/audio_files/Recording(6).wav"
-
+    audio_sample_path = "https://firebasestorage.googleapis.com/v0/b/emodetector-fad51.appspot.com/o/test"+"%2F"+str(audio_name)+"?alt=media"
     # Load the audio file
-    audio, sr = librosa.load(audio_sample_path, sr=22050)
+    print("audioPAth:",audio_sample_path)
+    with urllib.request.urlopen(audio_sample_path) as url:
+        data = input.BytesIO(url.read())
+    audio, sr = librosa.load(data,sr=22050)
+    # audio, sr = librosa.load(audio_sample_path, sr=22050)
 
     # Read normalization file
     min_list, max_list = read_normalization_file()
@@ -1028,16 +1040,100 @@ def audio_emotion_thread():
     return prediction[0]
 
 
-def text_emotion_thread():
+def text_emotion_thread(answer):
     # prediction = nlp.pred("I am afraid that I will fail in the exam")
-    prediction = nlp.pred("I am very happy today")
+    prediction = nlp.pred(answer)
     return prediction
 
+app = Flask(__name__)
+@app.route('/')
+def home():
+    return 'Hello, World!'
+    
+@app.route("/predict", methods=['GET'])
+def prediction():
+    image_file_name1 = request.args.get('imageFileName1')
+    image_file_name2 = request.args.get('imageFileName2')
+    image_file_name3 = request.args.get('imageFileName3')
+    audio_file_name = request.args.get('audioFileName')
+    answer = request.args.get('answer')
+    start_time = time.time()
+    threads = []
+
+    # Create a shared data structure to store the predictions
+    results = []
+
+    # Create a lock to synchronize access to the shared data structure
+    lock = threading.Lock()
+
+    def execute_function(func,*args):
+        result = func(*args)
+
+        # Acquire the lock to update the shared data structure
+        lock.acquire()
+        results.append(result)
+        lock.release()
+
+    # Create threads for each function
+    thread1 = threading.Thread(
+        target=execute_function, args=(audio_emotion_thread,audio_file_name))
+    thread2 = threading.Thread(
+        target=execute_function, args=(facial_emotion_thread,image_file_name1,image_file_name2,image_file_name3))
+    thread3 = threading.Thread(
+        target=execute_function, args=(text_emotion_thread,answer))
+
+    threads.append(thread1)
+    threads.append(thread2)
+    threads.append(thread3)
+    # Start the threads
+    thread1.start()
+    thread2.start()
+    thread3.start()
+
+    # Wait for both threads to finish
+    for thread in threads:
+        thread.join()
+    print(results)
+
+    # Record the ending time
+    end_time = time.time()
+
+    # Calculate the elapsed time
+    elapsed_time = end_time - start_time
+
+    # Print the elapsed time
+    print(f"Elapsed time: {elapsed_time} seconds")
+
+    # take the mode of the results
+    # results contains the predictions of the three threads  2 items and a list of 3 items
+    final_result = []
+   
+    for item in results:
+        if(type(item) != list):
+            final_result.append(item)
+        else:
+            for i in item:
+                final_result.append(i)
+
+    # take the majority vote of the final result
+    print(final_result)
+    final_result = max(set(final_result), key=final_result.count)
+    return jsonify({"prediction":final_result})
+
+@app.route("/test", methods=['GET'])
+def test():
+    
+    return jsonify({"Status":"Connected"})
 
 def main():
+    arg1 = sys.argv[1]
+    arg2 = sys.argv[2]
+    arg3=sys.argv[3]
+    arg5 = sys.argv[5]
+    arg4 = sys.argv[4]
     # Record the starting time
     start_time = time.time()
-
+    
     # Create threads to execute the functions
     threads = []
 
@@ -1047,8 +1143,8 @@ def main():
     # Create a lock to synchronize access to the shared data structure
     lock = threading.Lock()
 
-    def execute_function(func):
-        result = func()
+    def execute_function(func,*args):
+        result = func(*args)
 
         # Acquire the lock to update the shared data structure
         lock.acquire()
@@ -1057,11 +1153,11 @@ def main():
 
     # Create threads for each function
     thread1 = threading.Thread(
-        target=execute_function, args=(audio_emotion_thread,))
+        target=execute_function, args=(audio_emotion_thread,arg4))
     thread2 = threading.Thread(
-        target=execute_function, args=(facial_emotion_thread,))
+        target=execute_function, args=(facial_emotion_thread,arg1,arg2,arg3))
     thread3 = threading.Thread(
-        target=execute_function, args=(text_emotion_thread,))
+        target=execute_function, args=(text_emotion_thread,arg5))
 
     threads.append(thread1)
     threads.append(thread2)
@@ -1103,4 +1199,6 @@ def main():
 
 
 if __name__ == "__main__":
+    # app.run()
     main()
+    # app.run(host='192.168.1.8',port=5000,debug=True)
